@@ -39,10 +39,10 @@ PATH_RNKO = f'{PATH_BANKS}/РНКО/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}
 PATH_GPB = f'{PATH_BANKS}/ГПБ/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/{datetime.date.today().strftime("%d %m %Y")}/'
 
 DICT_BANKS = {
-    "ВБРР": PATH_VBRR,
-    "ВТБ": PATH_VTB,
-    "РНКО": PATH_RNKO,
-    "ГПБ": PATH_GPB,
+    "ВБРР": os.path.join(PATH_VBRR),
+    "ВТБ": os.path.join(PATH_VTB),
+    "РНКО": os.path.join(PATH_RNKO),
+    "ГПБ": os.path.join(PATH_GPB),
 }
 
 # print(DICT_BANKS)
@@ -57,29 +57,58 @@ DICT_FILES = {
 
 # path = os.path.normpath(PATH_VBRR)
 # path = PATH_VBRR
-path = os.path.join(PATH_VBRR)
-print(path)
+# path = os.path.join(PATH_VBRR)
+# print(path)
 # print(os.path.normpath(path))
 
+# list_of_files = ''
+for bank, path in DICT_BANKS.items():
+    print(f"Начало работы по '{bank}'")
+    # Получение в лист всех файлов в каталоге
+    list_of_files = filter(os.path.isfile,
+                           glob.glob(path + '*'))
+    # print(*list_of_files)
+    # Сортировка листа с файлами по дате
+    list_of_files = sorted(list_of_files,
+                           key=os.path.getmtime)
+    # print(*list_of_files)
 
-# Получение в лист всех файлов в каталоге
-list_of_files = filter(os.path.isfile,
-                       glob.glob(path + '*'))
+    if not list_of_files:
+        print(f'Банка {bank} сегодня нет')
 
-# Сортировка листа с файлами по дате
-list_of_files = sorted(list_of_files,
-                       key=os.path.getmtime)
+    for file in list_of_files:
+        # Итерация по листу с файлами и получение дат файлов
+        # print(file)
+
+        try:
+            timestamp_str = time.strftime('%d.%m.%Y',
+                                          time.gmtime(os.path.getmtime(file)))
+            # print(timestamp_str, ' -->', path)
+            if timestamp_str == TODAY_DATE:  # проверка по текущей дате
+                print(timestamp_str, ' -->', file)
+                if bank == "ВБРР":
+                    FILES_VBRR.append(file)
+                elif bank == "ВТБ":
+                    FILES_VTB.append(file)
+                elif bank == "РНКО":
+                    FILES_RNKO.append(file)
+                elif bank == "ГПБ":
+                    FILES_GPB.append(file)
+                # DICT_FILES.update(DICT_BANKS.keys())
+
+        except FileNotFoundError:  # если нет каталога или файла
+            pass
+
+    print(f"Конец работы по '{bank}'\n")
+    # for file_path in paths:
+    #     timestamp_str = time.strftime('%d.%m.%Y',
+    #                                   time.gmtime(os.path.getmtime(file_path)))
+    #     # print(timestamp_str, ' -->', file_path)
+    #
+    #     if timestamp_str == TODAY_DATE:  # проверка по текущей дате
+    #         print(timestamp_str, ' -->', file_path)
+    #         rnko_files.append(file_path)
 
 
-# Итерация по листу с файлами и получение дат файлов
-rnko_files = []
-for file_path in list_of_files:
-    timestamp_str = time.strftime('%d.%m.%Y',
-                                  time.gmtime(os.path.getmtime(file_path)))
-    # print(timestamp_str, ' -->', file_path)
-
-    if timestamp_str == TODAY_DATE:  # проверка по текущей дате
-        print(timestamp_str, ' -->', file_path)
-        rnko_files.append(file_path)
-
-print(rnko_files)
+print("Словарь")
+print(DICT_FILES)
