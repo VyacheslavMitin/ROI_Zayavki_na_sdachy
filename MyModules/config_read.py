@@ -18,7 +18,7 @@ PATH_TO_INI = path_ + INI_FILE
 cfg = configparser.ConfigParser()  # создание объекта с вызовом класса модуля работы с .ini файлами
 cfg.read(PATH_TO_INI)
 
-
+PATH_BANKS = cfg.get('PATHS', 'docs_path')
 OUTLOOK_BIN = cfg.get('PATHS', 'outlook_bin')
 
 RECIPIENTS_TEST = cfg.get('NAMES', 'recipients_test')
@@ -31,6 +31,7 @@ RECIPIENTS_VBRR = cfg.get('NAMES', 'recipients_vbrr')
 if __name__ == '__main__':
     print(PATH_TO_INI)
     print(OUTLOOK_BIN)
+    print(PATH_BANKS)
     print(RECIPIENTS_TEST)
     print(RECIPIENTS_RNKO)
     print(RECIPIENTS_GPB)

@@ -8,7 +8,7 @@ import os
 import time
 import datetime
 # Мои модули
-# from MyModules.config_read import *
+from MyModules.config_read import *
 from MyModules.sending_files import sending_outlook
 from MyModules.print_log import print_log
 
@@ -32,7 +32,7 @@ DICT_MOUNTS = {
     '12': "Декабрь"
 }
 
-PATH_BANKS = 'C:\\Users\\sonic\\YandexDisk\\Обмен\\заявки'
+
 PATH_VBRR = f'{PATH_BANKS}/ВБРР/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
 PATH_VTB = f'{PATH_BANKS}/ВТБ/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
 PATH_RNKO = f'{PATH_BANKS}/РНКО/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
@@ -58,9 +58,18 @@ DICT_FILES = {  # словарь с пустыми списками файлов
 }
 
 
-def search_files_to_send(printable=False):
+def network_work(mode='Enable'):
+    """Функция работы с сетью"""
+    pass
+
+
+def search_files_to_send(printable=False, technical=False):
     """Функция подготовки списка файлов на отправку"""
     print_log(f"Сбор файлов для отправки из '{PATH_BANKS}'", line_after=False)
+    if not os.path.isdir(PATH_BANKS):
+        print("Необходимо включить кассовую сеть если это не произошло и перезапустить программу!\n")
+        input()
+        sys.exit("Кассовая сеть не включена!")
     for bank, path in DICT_BANKS.items():
         if printable:
             print_log(f"Файлы для работы с банком '{bank}':", line_before=True)
@@ -94,11 +103,11 @@ def search_files_to_send(printable=False):
             except FileNotFoundError:  # если нет каталога или файла
                 pass
 
-    # if printable:  # вывод списка в принте если нужно
-    #     print("\nСловарь:")
-    #     for key, values in DICT_FILES.items():
-    #         if values:
-    #             print(f"Банк '{key}', файлы {values}")
+    if technical:  # вывод списка в принте если нужно
+        print("\nСловарь:")
+        for key, values in DICT_FILES.items():
+            if values:
+                print(f"Банк '{key}', файлы {values}")
 
 
 def main():
@@ -117,11 +126,13 @@ def main():
 
     print_log(f"Запуск MS Outlook...", line_before=True)
     subprocess.Popen(OUTLOOK_BIN)  # запуск MS Outlook
+    print("MS Outlook запущен, необходимо выключить кассовую сеть")
 
     ending = '\nокончание отправки Заявок на сдачу наличных денег в банки\n'.upper()
     print(ending)
 
-    input()
+    input()  # пауза программы перед выходом
+    sys.exit()
 
 
 if __name__ == '__main__':
