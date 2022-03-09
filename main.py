@@ -12,12 +12,12 @@ import datetime
 # from MyModules.past_dates import past_dates
 from MyModules.print_log import print_log
 
-today_date = datetime.date.today().strftime('%d.%m.%Y')
-today_year = datetime.date.today().strftime("%Y")
-today_mounth = datetime.date.today().strftime("%m")
-print(today_mounth, today_year)
+TODAY_DATE = datetime.date.today().strftime('%d.%m.%Y')
+TODAY_YEAR = datetime.date.today().strftime("%Y")
+TODAY_MOUNTH = datetime.date.today().strftime("%m")
+# print(TODAY_MOUNTH, TODAY_YEAR)
 
-dict_mounts = {
+DICT_MOUNTS = {
     '01': "Январь",
     '02': "Февраль",
     '03': "Март",
@@ -32,29 +32,53 @@ dict_mounts = {
     '12': "Декабрь"
 }
 
-path_vbrr = f'V:\\ВБРР\\{today_year}\\{dict_mounts.get(today_mounth)}\\'
-path_vtb = f'V:\\ВТБ\\{today_year}\\{dict_mounts.get(today_mounth)}\\'
-path_rnko = f'V:\\РНКО\\{today_year}\\{dict_mounts.get(today_mounth)}\\'
-path_gpb = f'V:\\ГПБ\\{today_year}\\{dict_mounts.get(today_mounth)}\\{datetime.date.today().strftime("%d %m %Y")}\\'
+PATH_BANKS = '/Users/sonic/Yandex.Disk.localized/Обмен/заявки'
+PATH_VBRR = f'{PATH_BANKS}/ВБРР/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
+PATH_VTB = f'{PATH_BANKS}/ВТБ/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
+PATH_RNKO = f'{PATH_BANKS}/РНКО/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
+PATH_GPB = f'{PATH_BANKS}/ГПБ/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/{datetime.date.today().strftime("%d %m %Y")}/'
 
+DICT_BANKS = {
+    "ВБРР": PATH_VBRR,
+    "ВТБ": PATH_VTB,
+    "РНКО": PATH_RNKO,
+    "ГПБ": PATH_GPB,
+}
 
-path = path_rnko
+# print(DICT_BANKS)
+
+FILES_VBRR, FILES_VTB, FILES_RNKO, FILES_GPB = [], [], [], []
+DICT_FILES = {
+    "ВБРР": FILES_VBRR,
+    "ВТБ": FILES_VTB,
+    "РНКО": FILES_RNKO,
+    "ГПБ": FILES_GPB,
+}
+
+# path = os.path.normpath(PATH_VBRR)
+# path = PATH_VBRR
+path = os.path.join(PATH_VBRR)
 print(path)
+# print(os.path.normpath(path))
 
 
-# Get list of all files only in the given directory
-list_of_files = filter( os.path.isfile,
-                        glob.glob(path + '*') )
-# Sort list of files based on last modification time in ascending order
-list_of_files = sorted( list_of_files,
-                        key = os.path.getmtime)
-# Iterate over sorted list of files and print file path
-# along with last modification time of file
+# Получение в лист всех файлов в каталоге
+list_of_files = filter(os.path.isfile,
+                       glob.glob(path + '*'))
+
+# Сортировка листа с файлами по дате
+list_of_files = sorted(list_of_files,
+                       key=os.path.getmtime)
+
+
+# Итерация по листу с файлами и получение дат файлов
 rnko_files = []
 for file_path in list_of_files:
-    timestamp_str = time.strftime(  '%d.%m.%Y',
-                                time.gmtime(os.path.getmtime(file_path)))
-    if timestamp_str == today_date:
+    timestamp_str = time.strftime('%d.%m.%Y',
+                                  time.gmtime(os.path.getmtime(file_path)))
+    # print(timestamp_str, ' -->', file_path)
+
+    if timestamp_str == TODAY_DATE:  # проверка по текущей дате
         print(timestamp_str, ' -->', file_path)
         rnko_files.append(file_path)
 
