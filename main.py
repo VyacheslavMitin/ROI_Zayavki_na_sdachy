@@ -7,9 +7,8 @@ import os
 import time
 import datetime
 # Мои модули
-# from MyModules.config_read import *
-# from MyModules.sending_files import sending_outlook
-# from MyModules.past_dates import past_dates
+from MyModules.config_read import *
+from MyModules.sending_files import sending_outlook
 from MyModules.print_log import print_log
 
 TODAY_DATE = datetime.date.today().strftime('%d.%m.%Y')
@@ -32,7 +31,7 @@ DICT_MOUNTS = {
     '12': "Декабрь"
 }
 
-PATH_BANKS = '/Users/sonic/Yandex.Disk.localized/Обмен/заявки'
+PATH_BANKS = 'C:\\Users\\sonic\\YandexDisk\\Обмен\\заявки'
 PATH_VBRR = f'{PATH_BANKS}/ВБРР/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
 PATH_VTB = f'{PATH_BANKS}/ВТБ/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
 PATH_RNKO = f'{PATH_BANKS}/РНКО/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
@@ -45,8 +44,6 @@ DICT_BANKS = {
     "ГПБ": os.path.join(PATH_GPB),
 }
 
-# print(DICT_BANKS)
-
 FILES_VBRR, FILES_VTB, FILES_RNKO, FILES_GPB = [], [], [], []
 DICT_FILES = {
     "ВБРР": FILES_VBRR,
@@ -55,61 +52,61 @@ DICT_FILES = {
     "ГПБ": FILES_GPB,
 }
 
-# path = os.path.normpath(PATH_VBRR)
-# path = PATH_VBRR
-# path = os.path.join(PATH_VBRR)
-# print(path)
-# print(os.path.normpath(path))
 
-# list_of_files = ''
-print_log("Сбор файлов для отправки", line_after=False)
-for bank, path in DICT_BANKS.items():
-    print_log(f"Начало работы по '{bank}'", line_before=True)
-    # Получение в лист всех файлов в каталоге
-    list_of_files = filter(os.path.isfile,
-                           glob.glob(path + '*'))
-    # print(*list_of_files)
-    # Сортировка листа с файлами по дате
-    list_of_files = sorted(list_of_files,
-                           key=os.path.getmtime)
-    # print(*list_of_files)
+def search_files_to_send(printable=False):
+    print_log("Сбор файлов для отправки", line_after=False)
+    for bank, path in DICT_BANKS.items():
+        if printable:
+            print_log(f"Начало работы по '{bank}'", line_before=True)
+        # Получение в лист всех файлов в каталоге
+        list_of_files = filter(os.path.isfile,
+                               glob.glob(path + '*'))
 
-    if not list_of_files:
-        print(f'Банка {bank} сегодня нет')
+        # Сортировка листа с файлами по дате
+        list_of_files = sorted(list_of_files,
+                               key=os.path.getmtime)
+        if printable:
+            if not list_of_files:
+                print(f'Банка {bank} сегодня нет')
 
-    for file in list_of_files:
-        # Итерация по листу с файлами и получение дат файлов
-        # print(file)
+        for file in list_of_files:
+            # Итерация по листу с файлами и получение дат файлов
 
-        try:
-            timestamp_str = time.strftime('%d.%m.%Y',
-                                          time.gmtime(os.path.getmtime(file)))
-            # print(timestamp_str, ' -->', path)
-            if timestamp_str == TODAY_DATE:  # проверка по текущей дате
-                print(timestamp_str, ' -->', file)
-                if bank == "ВБРР":
-                    FILES_VBRR.append(file)
-                elif bank == "ВТБ":
-                    FILES_VTB.append(file)
-                elif bank == "РНКО":
-                    FILES_RNKO.append(file)
-                elif bank == "ГПБ":
-                    FILES_GPB.append(file)
-                # DICT_FILES.update(DICT_BANKS.keys())
+            try:
+                timestamp_str = time.strftime('%d.%m.%Y',
+                                              time.gmtime(os.path.getmtime(file)))
+                if timestamp_str == TODAY_DATE:  # проверка по текущей дате
+                    if printable:
+                        print(timestamp_str, ' -->', file)
+                    if bank == "ВБРР":
+                        FILES_VBRR.append(os.path.normpath(file))
+                    elif bank == "ВТБ":
+                        FILES_VTB.append(os.path.normpath(file))
+                    elif bank == "РНКО":
+                        FILES_RNKO.append(os.path.normpath(file))
+                    elif bank == "ГПБ":
+                        FILES_GPB.append(os.path.normpath(file))
 
-        except FileNotFoundError:  # если нет каталога или файла
-            pass
+            except FileNotFoundError:  # если нет каталога или файла
+                pass
 
-    # print(f"Конец работы по '{bank}'\n")
-    # for file_path in paths:
-    #     timestamp_str = time.strftime('%d.%m.%Y',
-    #                                   time.gmtime(os.path.getmtime(file_path)))
-    #     # print(timestamp_str, ' -->', file_path)
-    #
-    #     if timestamp_str == TODAY_DATE:  # проверка по текущей дате
-    #         print(timestamp_str, ' -->', file_path)
-    #         rnko_files.append(file_path)
+    if printable:
+        print("\nСловарь:")
+        for key, values in DICT_FILES.items():
+            if values:
+                print(f"Банк '{key}', файлы {values}")
 
 
-print("\nСловарь")
-print(DICT_FILES)
+def main():
+    search_files_to_send()
+    # print(DICT_FILES)
+    sending_outlook(mode='work',
+                    bank="ГПБ",
+                    recipients=RECIPIENTS_TEST,
+                    files=None,
+                    displayed=True)
+
+
+if __name__ == '__main__':
+    # print(search_files_to_send())
+    main()
