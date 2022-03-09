@@ -2,6 +2,7 @@
 
 # ИМПОРТЫ
 import glob
+import subprocess
 import sys
 import os
 import time
@@ -14,7 +15,7 @@ from MyModules.print_log import print_log
 TODAY_DATE = datetime.date.today().strftime('%d.%m.%Y')
 TODAY_YEAR = datetime.date.today().strftime("%Y")
 TODAY_MOUNTH = datetime.date.today().strftime("%m")
-# print(TODAY_MOUNTH, TODAY_YEAR)
+
 
 DICT_MOUNTS = {
     '01': "Январь",
@@ -99,12 +100,15 @@ def search_files_to_send(printable=False):
 
 def main():
     search_files_to_send()
-    # print(DICT_FILES)
-    sending_outlook(mode='work',
-                    bank="ГПБ",
-                    recipients=RECIPIENTS_TEST,
-                    files=None,
-                    displayed=True)
+    # print(DICT_FILES, '\n')
+    for bank, files in DICT_FILES.items():
+        if files:
+            sending_outlook(mode='work',
+                            bank=bank,
+                            files=files,
+                            displayed=True)
+
+    subprocess.Popen(OUTLOOK_BIN)  # запуск MS Outlook
 
 
 if __name__ == '__main__':

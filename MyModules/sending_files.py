@@ -31,7 +31,7 @@ RECIPIENTS_VBRR = "kalinina@samara.vbrr.ru; kuznetsovaon@samara.vbrr.ru; bagryan
 
 
 # ФУНКЦИИ
-def sending_outlook(mode='work', bank=None, recipients=RECIPIENTS_TEST, files=None, displayed=True) -> None:
+def sending_outlook(mode='work', bank=None, files=None, displayed=True) -> None:
     """Функция подготовки писем к отправке через MS Outlook.
     Режимы mode могут быть 'work' и 'test'"""
     outlook = win32.gencache.EnsureDispatch('Outlook.Application')  # вызов MS Outlook
@@ -40,27 +40,40 @@ def sending_outlook(mode='work', bank=None, recipients=RECIPIENTS_TEST, files=No
     new_mail.BodyFormat = 2  # формат HTML
 
     if mode == 'test':
+        recipients = RECIPIENTS_TEST
+
         new_mail.Subject = f'Тестовое письмо {datetime.date.today().strftime("%d %m %Y")}'  # указание темы
         new_mail.Body = f'Тестовое письмо за {datetime.date.today().strftime("%d %m %Y")}.' \
                         + SIGNATURE  # сообщение
         new_mail.To = recipients  # обращение к списку получателей
 
     elif mode == 'work':
+        recipients = ''
+        if bank == "ВБРР":
+            recipients = RECIPIENTS_VBRR
+        elif bank == "ВТБ":
+            recipients = RECIPIENTS_VTB
+        elif bank == "РНКО":
+            recipients = RECIPIENTS_RNKO
+        elif bank == "ГПБ":
+            recipients = RECIPIENTS_GPB
+
         new_mail.Subject = f'Заявка на сдачу наличных денег {bank} {datetime.date.today().strftime("%d %m %Y")}'
         new_mail.Body = SIGNATURE  # сообщение
         new_mail.To = recipients  # обращение к списку получателей
         if files:
-            new_mail.Attachments.Add(files)
+            for file in files:
+                new_mail.Attachments.Add(file)
 
     if displayed:  # отображать окно письма
         new_mail.Display(True)  # отображение подготовленного письма или new_mail.Send()  # немедленная отправка письма
     else:
         new_mail.Send()
 
-    print_log("Письмо для отправки через MS Outlook подготовлено")
+    print_log(f"Письмо для отправки в '{bank}' подготовлено")
 
     time.sleep(0.5)
-    subprocess.Popen(OUTLOOK_BIN)  # запуск MS Outlook
+    # subprocess.Popen(OUTLOOK_BIN)  # запуск MS Outlook
 
 
 if __name__ == '__main__':
