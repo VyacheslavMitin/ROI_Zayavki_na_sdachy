@@ -1,4 +1,4 @@
-# Модуль подготовки
+# Модуль отправки Заявок на сдачу наличных денег
 
 # ИМПОРТЫ
 import glob
@@ -8,7 +8,7 @@ import os
 import time
 import datetime
 # Мои модули
-from MyModules.config_read import *
+# from MyModules.config_read import *
 from MyModules.sending_files import sending_outlook
 from MyModules.print_log import print_log
 
@@ -36,9 +36,13 @@ PATH_BANKS = 'C:\\Users\\sonic\\YandexDisk\\Обмен\\заявки'
 PATH_VBRR = f'{PATH_BANKS}/ВБРР/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
 PATH_VTB = f'{PATH_BANKS}/ВТБ/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
 PATH_RNKO = f'{PATH_BANKS}/РНКО/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
+# проверка вложенной папки в ГПБ
 PATH_GPB = f'{PATH_BANKS}/ГПБ/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/{datetime.date.today().strftime("%d %m %Y")}/'
+if os.path.isdir(f'{PATH_GPB}/{datetime.date.today().strftime("%d %m %Y")}/'):
+    PATH_GPB = f'{PATH_GPB}/{datetime.date.today().strftime("%d %m %Y")}/'
 
-DICT_BANKS = {
+
+DICT_BANKS = {  # словарь с путями для банков
     "ВБРР": os.path.join(PATH_VBRR),
     "ВТБ": os.path.join(PATH_VTB),
     "РНКО": os.path.join(PATH_RNKO),
@@ -46,7 +50,7 @@ DICT_BANKS = {
 }
 
 FILES_VBRR, FILES_VTB, FILES_RNKO, FILES_GPB = [], [], [], []
-DICT_FILES = {
+DICT_FILES = {  # словарь с пустыми списками файлов
     "ВБРР": FILES_VBRR,
     "ВТБ": FILES_VTB,
     "РНКО": FILES_RNKO,
@@ -55,10 +59,11 @@ DICT_FILES = {
 
 
 def search_files_to_send(printable=False):
-    print_log("Сбор файлов для отправки", line_after=False)
+    """Функция подготовки списка файлов на отправку"""
+    print_log(f"Сбор файлов для отправки из '{PATH_BANKS}'", line_after=False)
     for bank, path in DICT_BANKS.items():
         if printable:
-            print_log(f"Начало работы по '{bank}'", line_before=True)
+            print_log(f"Файлы для работы с банком '{bank}':", line_before=True)
         # Получение в лист всех файлов в каталоге
         list_of_files = filter(os.path.isfile,
                                glob.glob(path + '*'))
@@ -70,15 +75,14 @@ def search_files_to_send(printable=False):
             if not list_of_files:
                 print(f'Банка {bank} сегодня нет')
 
-        for file in list_of_files:
-            # Итерация по листу с файлами и получение дат файлов
-
+        for file in list_of_files:  # Итерация по листу с файлами и получение дат файлов
             try:
                 timestamp_str = time.strftime('%d.%m.%Y',
                                               time.gmtime(os.path.getmtime(file)))
                 if timestamp_str == TODAY_DATE:  # проверка по текущей дате
                     if printable:
-                        print(timestamp_str, ' -->', file)
+                        # print(timestamp_str, ' -->', file)
+                        print(file)
                     if bank == "ВБРР":
                         FILES_VBRR.append(os.path.normpath(file))
                     elif bank == "ВТБ":
@@ -87,30 +91,38 @@ def search_files_to_send(printable=False):
                         FILES_RNKO.append(os.path.normpath(file))
                     elif bank == "ГПБ":
                         FILES_GPB.append(os.path.normpath(file))
-
             except FileNotFoundError:  # если нет каталога или файла
                 pass
 
-    if printable:
-        print("\nСловарь:")
-        for key, values in DICT_FILES.items():
-            if values:
-                print(f"Банк '{key}', файлы {values}")
+    # if printable:  # вывод списка в принте если нужно
+    #     print("\nСловарь:")
+    #     for key, values in DICT_FILES.items():
+    #         if values:
+    #             print(f"Банк '{key}', файлы {values}")
 
 
 def main():
-    search_files_to_send()
-    # print(DICT_FILES, '\n')
-    for bank, files in DICT_FILES.items():
+    welcome = 'запуск отправки Заявок на сдачу наличных денег в банки\n'.upper()
+    print(welcome)  # представление
+
+    search_files_to_send(printable=True)  # поиск файлов на отправку и запись в словарь
+
+    print_log(f"Подготовка писем на отправку в MS Outlook:", line_before=True)
+    for bank, files in DICT_FILES.items():  # отправка файлов (постановка в очередь аутлука)
         if files:
             sending_outlook(mode='work',
                             bank=bank,
                             files=files,
                             displayed=True)
 
+    print_log(f"Запуск MS Outlook...", line_before=True)
     subprocess.Popen(OUTLOOK_BIN)  # запуск MS Outlook
+
+    ending = '\nокончание отправки Заявок на сдачу наличных денег в банки\n'.upper()
+    print(ending)
+
+    input()
 
 
 if __name__ == '__main__':
-    # print(search_files_to_send())
     main()

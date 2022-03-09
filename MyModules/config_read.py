@@ -18,54 +18,22 @@ PATH_TO_INI = path_ + INI_FILE
 cfg = configparser.ConfigParser()  # создание объекта с вызовом класса модуля работы с .ini файлами
 cfg.read(PATH_TO_INI)
 
-ITKO_BIN = cfg.get('PATHS', 'itko_bin')
+
 OUTLOOK_BIN = cfg.get('PATHS', 'outlook_bin')
-CHANGE_TIME = cfg.get('PATHS', 'change_time')
-# Блок для работы с путями к папкам
-PATH_ITKO = cfg.get('PATHS', 'dir_itko')
 
-PATH_SFORMIROVAT = os.path.join(PATH_ITKO, cfg.get('PATHS', 'dir_sformirovat'))
-PATH_014 = os.path.join(PATH_ITKO, cfg.get('PATHS', 'dir_014'))
-PATH_VSKK = os.path.join(PATH_ITKO, cfg.get('PATHS', 'dir_vskk'))
-PATH_VOU = os.path.join(PATH_ITKO, cfg.get('PATHS', 'dir_vou'))
-PATH_202 = os.path.join(PATH_ITKO, cfg.get('PATHS', 'dir_202'))
-PATH_PP = os.path.join(PATH_ITKO, cfg.get('PATHS', 'dir_pp'))
-
-dict_with_paths = {  # словарь с именами папок и путям к ним
-    'root_dir': ('07 ITKO\\', PATH_ITKO),
-    '014_dir': (cfg.get('PATHS', 'dir_014'), PATH_014),
-    'vskk_dir': (cfg.get('PATHS', 'dir_vskk'), PATH_VSKK),
-    'vou_dir': (cfg.get('PATHS', 'dir_vou'), PATH_VOU),
-    '202_dir': (cfg.get('PATHS', 'dir_202'), PATH_202),
-    'pp_dir': (cfg.get('PATHS', 'dir_pp'), PATH_PP),
-    'exports_dir': (cfg.get('PATHS', 'dir_sformirovat'), PATH_SFORMIROVAT),
-}
-
-# Блок для работы с именами клиентов
-NAMES_STR = cfg.get('NAMES', 'points')
-NAMES_STR_double = cfg.get('NAMES', 'points_double')
-# Блок для работы с письмами
-RECIPIENTS_SFORMIROVAT = cfg.get('NAMES', 'recipients_sform')
-RECIPIENTS_202 = cfg.get('NAMES', 'recipients_202')
-RECIPIENTS_VOU = cfg.get('NAMES', 'recipients_vou')
-RECIPIENTS_TEST = cfg.get('NAMES', 'recipients_test')
-RECIPIENTS_COPY = cfg.get('NAMES', 'recipients_copy')
-# Блок для определения монитора
-# from MyModules.checking_monitor import checking_monitor
-# COORDINATES_FOR_DISPLAY = checking_monitor(silent=True)
-# Блок для определения расширений файлов для поиска
-EXTENSIONS = cfg.get('PATHS', 'extensions')
+RECIPIENTS_TEST = "mva@rosinkas.ru; vyacheslav.mitin@gmail.com"
+RECIPIENTS_RNKO = "centr-msk@r-inkas.ru; dep@r-inkas.ru"
+RECIPIENTS_GPB = "inkass-uln@gazprombank.ru"
+RECIPIENTS_VTB = "nlevagin@vtb.ru; tazetdinova@vtb.ru; TugushevaEA@vtb.ru"
+RECIPIENTS_VBRR = "kalinina@samara.vbrr.ru; kuznetsovaon@samara.vbrr.ru; bagryanova_eg@samara.vbrr.ru; tyakina_iv@samara.vbrr.ru; kalashnikova_nv@samara.vbrr.ru"
 
 
 if __name__ == '__main__':
     print(PATH_TO_INI)
-    print(ITKO_BIN)
     print(OUTLOOK_BIN)
-    print(CHANGE_TIME)
-    print(PATH_ITKO)
-    print(NAMES_STR)
-    print(NAMES_STR_double)
-    print(RECIPIENTS_SFORMIROVAT)
-    print(RECIPIENTS_202)
-    print(RECIPIENTS_VOU)
-    print(EXTENSIONS)
+    print(RECIPIENTS_TEST)
+    print(RECIPIENTS_RNKO)
+    print(RECIPIENTS_GPB)
+    print(RECIPIENTS_VTB)
+    print(RECIPIENTS_VBRR)
+
