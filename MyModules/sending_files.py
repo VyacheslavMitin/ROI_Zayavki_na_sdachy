@@ -1,11 +1,11 @@
-# Модуль работы с поиском и отправкой файлов через емейл
+# Модуль работы с поиском и отправкой файлов через MS Outlook
 
 # Импорты
 import glob
 import subprocess
 import time
 import datetime
-import win32com.client as win32  # импорт модуля для работы с Win32COM (MS Outlook, etc.)
+import win32com.client as win32  # импорт модуля для работы с Win32COM (MS Outlook, etc.) pip install pywin32
 
 # Мои модули
 from MyModules.print_log import print_log
