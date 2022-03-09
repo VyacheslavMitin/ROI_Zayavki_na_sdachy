@@ -62,8 +62,9 @@ DICT_FILES = {
 # print(os.path.normpath(path))
 
 # list_of_files = ''
+print_log("Сбор файлов для отправки", line_after=False)
 for bank, path in DICT_BANKS.items():
-    print(f"Начало работы по '{bank}'")
+    print_log(f"Начало работы по '{bank}'", line_before=True)
     # Получение в лист всех файлов в каталоге
     list_of_files = filter(os.path.isfile,
                            glob.glob(path + '*'))
@@ -99,7 +100,7 @@ for bank, path in DICT_BANKS.items():
         except FileNotFoundError:  # если нет каталога или файла
             pass
 
-    print(f"Конец работы по '{bank}'\n")
+    # print(f"Конец работы по '{bank}'\n")
     # for file_path in paths:
     #     timestamp_str = time.strftime('%d.%m.%Y',
     #                                   time.gmtime(os.path.getmtime(file_path)))
@@ -110,5 +111,5 @@ for bank, path in DICT_BANKS.items():
     #         rnko_files.append(file_path)
 
 
-print("Словарь")
+print("\nСловарь")
 print(DICT_FILES)
