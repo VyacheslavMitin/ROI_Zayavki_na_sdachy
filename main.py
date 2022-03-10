@@ -16,7 +16,6 @@ TODAY_DATE = datetime.date.today().strftime('%d.%m.%Y')
 TODAY_YEAR = datetime.date.today().strftime("%Y")
 TODAY_MOUNTH = datetime.date.today().strftime("%m")
 
-
 DICT_MOUNTS = {
     '01': "Январь",
     '02': "Февраль",
@@ -32,7 +31,6 @@ DICT_MOUNTS = {
     '12': "Декабрь"
 }
 
-
 PATH_VBRR = f'{PATH_BANKS}/ВБРР/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
 PATH_VTB = f'{PATH_BANKS}/ВТБ/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
 PATH_RNKO = f'{PATH_BANKS}/РНКО/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
@@ -40,7 +38,6 @@ PATH_RNKO = f'{PATH_BANKS}/РНКО/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}
 PATH_GPB = f'{PATH_BANKS}/ГПБ/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/{datetime.date.today().strftime("%d %m %Y")}/'
 if os.path.isdir(f'{PATH_GPB}/{datetime.date.today().strftime("%d %m %Y")}/'):
     PATH_GPB = f'{PATH_GPB}/{datetime.date.today().strftime("%d %m %Y")}/'
-
 
 DICT_BANKS = {  # словарь с путями для банков
     "ВБРР": os.path.join(PATH_VBRR),
@@ -58,18 +55,21 @@ DICT_FILES = {  # словарь с пустыми списками файлов
 }
 
 
-def network_work(mode='Enable'):
+def network_work():
     """Функция работы с сетью"""
-    pass
+    print_log("Проверка сети и открытие каталога с папками банков", line_after=True)
+    if not os.path.isdir(PATH_BANKS):
+        print("\nНеобходимо включить кассовую сеть если это не произошло и перезапустить программу!\n".upper())
+        input()
+        sys.exit("Кассовая сеть не включена!")
+
+    os.system(f"explorer.exe {PATH_BANKS}")
 
 
 def search_files_to_send(printable=False, technical=False):
     """Функция подготовки списка файлов на отправку"""
-    print_log(f"Сбор файлов для отправки из '{PATH_BANKS}'", line_after=False)
-    if not os.path.isdir(PATH_BANKS):
-        print("Необходимо включить кассовую сеть если это не произошло и перезапустить программу!\n")
-        input()
-        sys.exit("Кассовая сеть не включена!")
+    print_log(f"Сбор документов для отправки из '{PATH_BANKS}'", line_after=False)
+
     for bank, path in DICT_BANKS.items():
         if printable:
             print_log(f"Файлы для работы с банком '{bank}':", line_before=True)
@@ -80,9 +80,9 @@ def search_files_to_send(printable=False, technical=False):
         # Сортировка листа с файлами по дате
         list_of_files = sorted(list_of_files,
                                key=os.path.getmtime)
-        if printable:
-            if not list_of_files:
-                print(f'Банка {bank} сегодня нет')
+        # if printable:
+        #     if not list_of_files:
+        #         print(f'Документов Банка {bank} в этом месяце нет')
 
         for file in list_of_files:  # Итерация по листу с файлами и получение дат файлов
             try:
@@ -114,7 +114,9 @@ def main():
     welcome = 'запуск отправки Заявок на сдачу наличных денег в банки\n'.upper()
     print(welcome)  # представление
 
-    search_files_to_send(printable=True)  # поиск файлов на отправку и запись в словарь
+    network_work()
+
+    search_files_to_send(printable=True, technical=False)  # поиск файлов на отправку и запись в словарь
 
     print_log(f"Подготовка писем на отправку в MS Outlook:", line_before=True)
     for bank, files in DICT_FILES.items():  # отправка файлов (постановка в очередь аутлука)
