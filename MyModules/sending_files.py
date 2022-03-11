@@ -23,12 +23,6 @@ SIGNATURE = """
 С 7:00 до 12:00 и с 13:00 до 16:00
 """
 
-RECIPIENTS_TEST = "mva@rosinkas.ru; vyacheslav.mitin@gmail.com"
-RECIPIENTS_RNKO = "centr-msk@r-inkas.ru; dep@r-inkas.ru"
-RECIPIENTS_GPB = "inkass-uln@gazprombank.ru"
-RECIPIENTS_VTB = "nlevagin@vtb.ru; tazetdinova@vtb.ru; TugushevaEA@vtb.ru"
-RECIPIENTS_VBRR = "kalinina@samara.vbrr.ru; kuznetsovaon@samara.vbrr.ru; bagryanova_eg@samara.vbrr.ru; tyakina_iv@samara.vbrr.ru; kalashnikova_nv@samara.vbrr.ru"
-
 
 # ФУНКЦИИ
 def sending_outlook(mode='work', bank=None, files=None, displayed=True) -> None:
@@ -78,7 +72,10 @@ def sending_outlook(mode='work', bank=None, files=None, displayed=True) -> None:
 
 if __name__ == '__main__':
     # pass
-    sending_outlook()
+    sending_outlook(mode='test',
+
+                    files=None,
+                    displayed=True)
     # sending_outlook('sformirovat')
     # sending_outlook('202')
     # print(search_sending_files('202')[0])
