@@ -21,11 +21,11 @@ cfg.read(PATH_TO_INI)
 
 OUTLOOK_BIN = cfg.get('PATHS', 'outlook_bin')
 
-RECIPIENTS_TEST = "mva@rosinkas.ru; vyacheslav.mitin@gmail.com"
-RECIPIENTS_RNKO = "centr-msk@r-inkas.ru; dep@r-inkas.ru"
-RECIPIENTS_GPB = "inkass-uln@gazprombank.ru"
-RECIPIENTS_VTB = "nlevagin@vtb.ru; tazetdinova@vtb.ru; TugushevaEA@vtb.ru"
-RECIPIENTS_VBRR = "kalinina@samara.vbrr.ru; kuznetsovaon@samara.vbrr.ru; bagryanova_eg@samara.vbrr.ru; tyakina_iv@samara.vbrr.ru; kalashnikova_nv@samara.vbrr.ru"
+RECIPIENTS_TEST = cfg.get('NAMES', 'recipients_test')
+RECIPIENTS_RNKO = cfg.get('NAMES', 'recipients_rnko')
+RECIPIENTS_GPB = cfg.get('NAMES', 'recipients_gpb')
+RECIPIENTS_VTB = cfg.get('NAMES', 'recipients_vtb')
+RECIPIENTS_VBRR = cfg.get('NAMES', 'recipients_vbrr')
 
 
 if __name__ == '__main__':
