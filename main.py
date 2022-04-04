@@ -33,7 +33,12 @@ DICT_MOUNTS = {
 
 PATH_VBRR = f'{PATH_BANKS}/ВБРР/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
 PATH_VTB = f'{PATH_BANKS}/ВТБ/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
-PATH_RNKO = f'{PATH_BANKS}/РНКО/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/'
+
+# проверка вложенной папки в РНКО
+PATH_RNKO = f'{PATH_BANKS}/РНКО/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/{datetime.date.today().strftime("%d %m %Y")}/'
+if os.path.isdir(f'{PATH_RNKO}/{datetime.date.today().strftime("%d %m %Y")}/'):
+    PATH_RNKO = f'{PATH_RNKO}/{datetime.date.today().strftime("%d %m %Y")}/'
+
 # проверка вложенной папки в ГПБ
 PATH_GPB = f'{PATH_BANKS}/ГПБ/{TODAY_YEAR}/{DICT_MOUNTS.get(TODAY_MOUNTH)}/{datetime.date.today().strftime("%d %m %Y")}/'
 if os.path.isdir(f'{PATH_GPB}/{datetime.date.today().strftime("%d %m %Y")}/'):
